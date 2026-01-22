@@ -1,5 +1,8 @@
 # sheen
 
+[![Crates.io](https://img.shields.io/crates/v/sheen.svg)](https://crates.io/crates/sheen)
+[![Docs.rs](https://docs.rs/sheen/badge.svg)](https://docs.rs/sheen)
+
 A minimal, colorful logging library for Rust.
 
 ## Quick Start
