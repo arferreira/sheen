@@ -7,6 +7,7 @@ use crate::Level;
 pub struct Logger {
     level: Level,
     show_timestamp: bool,
+    prefix: Option<String>,
 }
 
 impl Logger {
@@ -20,6 +21,11 @@ impl Logger {
 
     pub fn timestamp(mut self, show: bool) -> Self {
         self.show_timestamp = show;
+        self
+    }
+
+    pub fn prefix(mut self, prefix: &str) -> Self {
+        self.prefix = Some(prefix.to_string());
         self
     }
 
@@ -57,6 +63,10 @@ impl Logger {
             eprint!("{} ", ts.dimmed())
         }
 
+        if let Some(ref p) = self.prefix {
+            eprint!("{} ", p.bold());
+        }
+
         let level_str = format!("{:<5}", level.as_str());
         let level_str = match level {
             Level::Trace => level_str.dimmed().to_string(),
@@ -79,6 +89,7 @@ impl Default for Logger {
         Self {
             level: Level::Info,
             show_timestamp: true,
+            prefix: None,
         }
     }
 }
