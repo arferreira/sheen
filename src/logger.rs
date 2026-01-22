@@ -1,3 +1,5 @@
+use owo_colors::OwoColorize;
+
 use crate::Level;
 
 pub struct Logger {
@@ -37,7 +39,15 @@ impl Logger {
             return;
         }
 
-        eprintln!("{} {}", level.as_str(), message)
+        let level_str = match level {
+            Level::Trace => level.as_str().dimmed().to_string(),
+            Level::Info => level.as_str().cyan().to_string(),
+            Level::Warn => level.as_str().yellow().to_string(),
+            Level::Debug => level.as_str().magenta().to_string(),
+            Level::Error => level.as_str().red().to_string(),
+        };
+
+        eprintln!("{} {}", level_str, message)
     }
 }
 
