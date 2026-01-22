@@ -5,6 +5,8 @@
 
 A minimal, colorful logging library for Rust.
 
+![sheen demo](sheen.gif)
+
 ## Quick Start
 
 ```rust
