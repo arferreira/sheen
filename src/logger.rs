@@ -1,6 +1,6 @@
 use chrono::Local;
 use owo_colors::OwoColorize;
-use std::fmt::Debug;
+use std::{fmt::Debug, io::IsTerminal};
 
 use crate::Level;
 
@@ -8,6 +8,7 @@ pub struct Logger {
     level: Level,
     show_timestamp: bool,
     prefix: Option<String>,
+    colorize: bool,
 }
 
 impl Logger {
@@ -31,6 +32,11 @@ impl Logger {
 
     pub fn level(mut self, level: Level) -> Self {
         self.level = level;
+        self
+    }
+
+    pub fn colorize(mut self, enabled: bool) -> Self {
+        self.colorize = enabled;
         self
     }
 
@@ -60,20 +66,32 @@ impl Logger {
 
         if self.show_timestamp {
             let ts = Local::now().format("%H:%M:%S").to_string();
-            eprint!("{} ", ts.dimmed())
+            if self.colorize {
+                eprint!("{} ", ts.dimmed())
+            } else {
+                eprint!("{} ", ts)
+            }
         }
 
         if let Some(ref p) = self.prefix {
-            eprint!("{} ", p.bold());
+            if self.colorize {
+                eprint!("{} ", p.bold());
+            } else {
+                eprint!("{} ", p)
+            }
         }
 
         let level_str = format!("{:<5}", level.as_str());
-        let level_str = match level {
-            Level::Trace => level_str.dimmed().to_string(),
-            Level::Info => level_str.cyan().to_string(),
-            Level::Warn => level_str.yellow().to_string(),
-            Level::Debug => level_str.magenta().to_string(),
-            Level::Error => level_str.red().to_string(),
+        let level_str = if self.colorize {
+            match level {
+                Level::Trace => level_str.dimmed().to_string(),
+                Level::Info => level_str.cyan().to_string(),
+                Level::Warn => level_str.yellow().to_string(),
+                Level::Debug => level_str.magenta().to_string(),
+                Level::Error => level_str.red().to_string(),
+            }
+        } else {
+            level_str
         };
 
         eprint!("{} {}", level_str, message);
@@ -90,6 +108,7 @@ impl Default for Logger {
             level: Level::Info,
             show_timestamp: true,
             prefix: None,
+            colorize: std::io::stderr().is_terminal(), // auto-detect (TTY)
         }
     }
 }
