@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 owo-colors = "4.2.3"
+chrono = { version = "0.4.43", default-features = false, features = ["clock"] }

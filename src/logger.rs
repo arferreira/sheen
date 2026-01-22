@@ -1,3 +1,4 @@
+use chrono::Local;
 use owo_colors::OwoColorize;
 use std::fmt::Debug;
 
@@ -5,6 +6,7 @@ use crate::Level;
 
 pub struct Logger {
     level: Level,
+    show_timestamp: bool,
 }
 
 impl Logger {
@@ -16,8 +18,14 @@ impl Logger {
         level >= self.level
     }
 
-    pub fn with_level(level: Level) -> Self {
-        Self { level }
+    pub fn timestamp(mut self, show: bool) -> Self {
+        self.show_timestamp = show;
+        self
+    }
+
+    pub fn level(mut self, level: Level) -> Self {
+        self.level = level;
+        self
     }
 
     pub fn info(&self, message: &str, fields: &[(&str, &dyn Debug)]) {
@@ -44,6 +52,11 @@ impl Logger {
             return;
         }
 
+        if self.show_timestamp {
+            let ts = Local::now().format("%H:%M:%S").to_string();
+            eprint!("{} ", ts.dimmed())
+        }
+
         let level_str = format!("{:<5}", level.as_str());
         let level_str = match level {
             Level::Trace => level_str.dimmed().to_string(),
@@ -63,6 +76,9 @@ impl Logger {
 
 impl Default for Logger {
     fn default() -> Self {
-        Self { level: Level::Info }
+        Self {
+            level: Level::Info,
+            show_timestamp: true,
+        }
     }
 }
