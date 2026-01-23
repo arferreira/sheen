@@ -143,5 +143,3 @@ let logger = Logger::new().colorize(false);
 ## License
 
 MIT
-
-```
