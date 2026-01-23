@@ -1,9 +1,7 @@
+use sheen::{Level, LogFmtFormatter, Logger};
+
 fn main() {
-    let logger = sheen::Logger::new().level(sheen::Level::Trace);
+    let logger = Logger::new().level(Level::Trace).formatter(LogFmtFormatter);
 
-    let req_log = logger.with(&[("request_id", &"abc123")]);
-
-    req_log.info("started", &[]);
-    req_log.info("db query", &[("table", &"users")]);
-    req_log.error("failed", &[("code", &500)]);
+    logger.info("started", &[("port", &3000)]);
 }

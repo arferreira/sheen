@@ -54,7 +54,11 @@ fn main() {
     sheen::info!("response sent", status = 200, duration_ms = 287);
     sleep(500);
 
-    sheen::info!("request received", method = "DELETE", path = "/api/users/99");
+    sheen::info!(
+        "request received",
+        method = "DELETE",
+        path = "/api/users/99"
+    );
     sleep(100);
     sheen::error!("user not found", id = 99);
     sleep(150);

@@ -1,8 +1,7 @@
 use chrono::Local;
-use owo_colors::OwoColorize;
 use std::{fmt::Debug, io::IsTerminal};
 
-use crate::Level;
+use crate::{Formatter, Level, formatter::TextFormatter};
 
 pub struct Logger {
     level: Level,
@@ -10,6 +9,7 @@ pub struct Logger {
     prefix: Option<String>,
     colorize: bool,
     fields: Vec<(String, String)>,
+    formatter: Box<dyn Formatter>,
 }
 
 impl Logger {
@@ -41,6 +41,11 @@ impl Logger {
         self
     }
 
+    pub fn formatter<F: Formatter + 'static>(mut self, f: F) -> Self {
+        self.formatter = Box::new(f);
+        self
+    }
+
     pub fn with(&self, fields: &[(&str, &dyn std::fmt::Debug)]) -> Self {
         let mut new_fields = self.fields.clone();
         for (key, value) in fields {
@@ -52,8 +57,9 @@ impl Logger {
             level: self.level,
             show_timestamp: self.show_timestamp,
             prefix: self.prefix.clone(),
-            colorize: self.colorize,
+            colorize: std::io::stderr().is_terminal(),
             fields: new_fields,
+            formatter: Box::new(TextFormatter::new(self.colorize)),
         }
     }
 
@@ -81,46 +87,22 @@ impl Logger {
             return;
         }
 
-        if self.show_timestamp {
-            let ts = Local::now().format("%H:%M:%S").to_string();
-            if self.colorize {
-                eprint!("{} ", ts.dimmed())
-            } else {
-                eprint!("{} ", ts)
-            }
-        }
-
-        if let Some(ref p) = self.prefix {
-            if self.colorize {
-                eprint!("{} ", p.bold());
-            } else {
-                eprint!("{} ", p)
-            }
-        }
-
-        let level_str = format!("{:<5}", level.as_str());
-        let level_str = if self.colorize {
-            match level {
-                Level::Trace => level_str.dimmed().to_string(),
-                Level::Info => level_str.cyan().to_string(),
-                Level::Warn => level_str.yellow().to_string(),
-                Level::Debug => level_str.magenta().to_string(),
-                Level::Error => level_str.red().to_string(),
-            }
+        let timestamp = if self.show_timestamp {
+            Some(Local::now().format("%H:%M:%S").to_string())
         } else {
-            level_str
+            None
         };
 
-        eprint!("{} {}", level_str, message);
+        let output = self.formatter.format(
+            level,
+            message,
+            timestamp.as_deref(),
+            self.prefix.as_deref(),
+            &self.fields,
+            fields,
+        );
 
-        for (key, value) in &self.fields {
-            eprint!(" {}={}", key, value);
-        }
-
-        for (key, value) in fields {
-            eprint!(" {}={:?}", key, value);
-        }
-        eprintln!();
+        eprintln!("{}", output);
     }
 }
 
@@ -132,6 +114,7 @@ impl Default for Logger {
             prefix: None,
             colorize: std::io::stderr().is_terminal(), // auto-detect (TTY)
             fields: Vec::new(),
+            formatter: Box::new(TextFormatter::new(std::io::stderr().is_terminal())),
         }
     }
 }
