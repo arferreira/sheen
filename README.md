@@ -20,12 +20,20 @@ sheen is inspired by [charmbracelet/log](https://github.com/charmbracelet/log), 
 - TTY detection (auto-disables colors when piped)
 - Builder pattern configuration
 - Zero config defaults
+- `log` crate compatibility (optional feature flag)
 
 ## Installation
 
 ```toml
 [dependencies]
-sheen = "0.2"
+sheen = "0.3"
+```
+
+With `log` crate support:
+
+```toml
+[dependencies]
+sheen = { version = "0.3", features = ["log"] }
 ```
 
 ## Quick Start
@@ -88,6 +96,25 @@ Output:
 14:32:15 INFO  started request_id="abc123"
 14:32:15 INFO  db query request_id="abc123" table="users"
 14:32:15 INFO  completed request_id="abc123" status=200
+```
+
+## Log Crate Integration
+
+Enable the `log` feature to use sheen as a backend for the [`log`](https://crates.io/crates/log) crate. This captures logs from any dependency that uses `log::info!()`, `log::warn!()`, etc.
+
+```rust
+use sheen::{Logger, Level};
+
+fn main() {
+    Logger::new()
+        .level(Level::Debug)
+        .init()
+        .unwrap();
+
+    // Standard log macros now go through sheen
+    log::info!("server started");
+    log::warn!("cache nearly full");
+}
 ```
 
 ## Formatters
