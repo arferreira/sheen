@@ -15,11 +15,22 @@ owo-colors = "4.2.3"
 chrono = { version = "0.4.43", default-features = false, features = ["clock"] }
 # Log impl
 log = { version = "0.4.29", optional = true, features = ["std"] }
+# Tracing impl
+tracing = { version = "0.1.44", optional = true, default-features = false }
+tracing-subscriber = { version = "0.3.22", optional = true, default-features = false, features = ["registry"] }
 
+[features]
+tracing = ["dep:tracing", "dep:tracing-subscriber"]
 
 [dev-dependencies]
 log = "0.4.29"
+tracing = "0.1.44"
+tracing-subscriber = "0.3.22"
 
 [[example]]
 name = "log_adapter"
 required-features = ["log"]
+
+[[example]]
+name = "tracing_adapter"
+required-features = ["tracing"]

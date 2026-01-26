@@ -21,6 +21,7 @@ sheen is inspired by [charmbracelet/log](https://github.com/charmbracelet/log), 
 - Builder pattern configuration
 - Zero config defaults
 - `log` crate compatibility (optional feature flag)
+- `tracing` crate compatibility (optional feature flag)
 
 ## Installation
 
@@ -36,12 +37,19 @@ With `log` crate support:
 sheen = { version = "0.3", features = ["log"] }
 ```
 
+With `tracing` crate support:
+
+```toml
+[dependencies]
+sheen = { version = "0.3", features = ["tracing"] }
+```
+
 ## Quick Start
 
 ```rust
 fn main() {
     sheen::init();
-    
+
     sheen::info!("Server started", port = 3000);
     sheen::debug!("Loading config");
     sheen::warn!("Cache miss", key = "user_123");
@@ -114,6 +122,21 @@ fn main() {
     // Standard log macros now go through sheen
     log::info!("server started");
     log::warn!("cache nearly full");
+}
+```
+
+## Tracing Crate Integration
+
+Enable the `tracing` feature to use sheen as a subscriber for the [`tracing`](https://crates.io/crates/tracing) crate. This captures events from any dependency that uses `tracing::info!()`, `tracing::warn!()`, etc.
+
+```rust
+use sheen::{Logger, Level, SheenLayer};
+
+fn main() {
+    SheenLayer::new(Logger::new().level(Level::Trace)).init();
+
+    tracing::info!("server started");
+    tracing::warn!("cache nearly full");
 }
 ```
 

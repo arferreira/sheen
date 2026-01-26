@@ -47,6 +47,32 @@ impl From<Level> for log::LevelFilter {
     }
 }
 
+#[cfg(feature = "tracing")]
+impl From<Level> for tracing::Level {
+    fn from(level: Level) -> Self {
+        match level {
+            Level::Trace => tracing::Level::TRACE,
+            Level::Debug => tracing::Level::DEBUG,
+            Level::Info => tracing::Level::INFO,
+            Level::Warn => tracing::Level::WARN,
+            Level::Error => tracing::Level::ERROR,
+        }
+    }
+}
+
+#[cfg(feature = "tracing")]
+impl From<tracing::Level> for Level {
+    fn from(level: tracing::Level) -> Self {
+        match level {
+            tracing::Level::TRACE => Level::Trace,
+            tracing::Level::DEBUG => Level::Debug,
+            tracing::Level::INFO => Level::Info,
+            tracing::Level::WARN => Level::Warn,
+            tracing::Level::ERROR => Level::Error,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
