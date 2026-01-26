@@ -118,3 +118,13 @@ impl Default for Logger {
         }
     }
 }
+
+#[cfg(feature = "log")]
+impl Logger {
+    pub fn init(self) -> Result<(), log::SetLoggerError> {
+        let max_level: log::LevelFilter = self.level.into();
+        log::set_boxed_logger(Box::new(self))?;
+        log::set_max_level(max_level);
+        Ok(())
+    }
+}

@@ -19,6 +19,34 @@ impl Level {
     }
 }
 
+// Converting log::Level to sheen::Level
+#[cfg(feature = "log")]
+impl From<log::Level> for Level {
+    fn from(level: log::Level) -> Self {
+        match level {
+            log::Level::Trace => Level::Trace,
+            log::Level::Debug => Level::Debug,
+            log::Level::Info => Level::Info,
+            log::Level::Warn => Level::Warn,
+            log::Level::Error => Level::Error,
+        }
+    }
+}
+
+// reverse
+#[cfg(feature = "log")]
+impl From<Level> for log::LevelFilter {
+    fn from(level: Level) -> Self {
+        match level {
+            Level::Trace => log::LevelFilter::Trace,
+            Level::Debug => log::LevelFilter::Debug,
+            Level::Info => log::LevelFilter::Info,
+            Level::Warn => log::LevelFilter::Warn,
+            Level::Error => log::LevelFilter::Error,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

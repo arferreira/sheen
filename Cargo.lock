@@ -158,6 +158,7 @@ name = "sheen"
 version = "0.2.0"
 dependencies = [
  "chrono",
+ "log",
  "owo-colors",
 ]
 

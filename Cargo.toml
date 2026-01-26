@@ -13,3 +13,9 @@ categories = ["development-tools::debugging"]
 [dependencies]
 owo-colors = "4.2.3"
 chrono = { version = "0.4.43", default-features = false, features = ["clock"] }
+# Log impl
+log = { version = "0.4.29", optional = true, features = ["std"] }
+
+
+[dev-dependencies]
+log = "0.4.29"
