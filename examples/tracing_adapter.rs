@@ -1,11 +1,7 @@
 use sheen::{Level, Logger, SheenLayer};
-use tracing_subscriber::prelude::*;
 
 fn main() {
-    let logger = Logger::new().level(Level::Trace);
-    let layer = SheenLayer::new(logger);
-
-    tracing_subscriber::registry().with(layer).init();
+    SheenLayer::new(Logger::new().level(Level::Trace)).init();
 
     tracing::trace!("starting up");
     tracing::debug!("loading configuration");

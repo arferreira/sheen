@@ -8,6 +8,11 @@ impl SheenLayer {
     pub fn new(logger: Logger) -> Self {
         Self { logger }
     }
+
+    pub fn init(self) {
+        use tracing_subscriber::prelude::*;
+        tracing_subscriber::registry().with(self).init();
+    }
 }
 
 struct FieldVisitor {
